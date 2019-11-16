@@ -1,6 +1,6 @@
 import { authEntity } from '../Actions/Auth';
 import { userEntity } from '../Actions/User';
-import { HTTP_GET, isRequestSuccess } from '../../utils/api';
+import { HTTP_GET, HTTP_POST, HTTP_PUT, isRequestSuccess } from '../../utils/api';
 
 const initialState = { user: null };
 

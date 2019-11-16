@@ -5,11 +5,12 @@ import { formToObject } from './utils';
 import { routes } from '../../Core/constants';
 import { authEntity, login } from '../../Actions/Auth';
 import AuthPage from './AuthPage';
+import { HTTP_POST, getRequestState } from '../../../utils/api';
 
 const mapStateToProps = state => {
   return {
     user: state.entities.user,
-    requestState: getRequestState(state, HTTP_POST, authEntity, ownProps.type)
+    requestState: getRequestState(state, HTTP_POST, authEntity)
   };
 };
 
@@ -23,7 +24,7 @@ const mapDispatchToProps = dispatch => {
 
 const LoginForm = ({
   requestState,
-  currentUser,
+  user,
   doLogin,
   location: { state: { from: { pathname: returnTo } = {} } = {} } = {},
 } = {}) => {

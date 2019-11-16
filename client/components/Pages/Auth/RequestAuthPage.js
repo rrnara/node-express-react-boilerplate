@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { tokenEntity, generateToken } from '../../Actions/Auth';
 import { formToObject } from './utils';
 import AuthPage from './AuthPage';
-import { HTTP_PUT, getRequestState } from '../../utils/api';
+import { HTTP_PUT, getRequestState } from '../../../utils/api';
 
 const mapStateToProps = (state, ownProps) => {
   return {

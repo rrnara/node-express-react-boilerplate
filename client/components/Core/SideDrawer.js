@@ -45,12 +45,15 @@ const mapStateToProps = state => {
   };
 };
 
-const generateList = (routeKey) => {
+const generateList = (type) => {
   const listItems = [];
-  routes[routeKey].forEach(route => {
+  const routesForType = routes[type];
+  Object.keys(routesForType).forEach(key => {
+    const route = routesForType[key];
     if (route.drawerMenuIcon) {
       listItems.push(
         <ListItemLink
+        key={`sidebar_${type}_${key}`}
           to={route.path}
           primary={route.label}
           icon={React.createElement(route.drawerMenuIcon)}

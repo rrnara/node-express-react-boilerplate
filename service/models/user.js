@@ -24,12 +24,12 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = function(models) {
     // associations can be defined here
   };
-  User.hook('beforeCreate', (user) => {
+  User.addHook('beforeCreate', (user) => {
     if (user.password) {
       user.password = hashing.hashSync(user.password);
     }
   });
-  User.hook('beforeUpdate', (user) => {
+  User.addHook('beforeUpdate', (user) => {
     if (user.password != user.previous.password) {
       user.password = hashing.hashSync(user.password);
     }

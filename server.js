@@ -72,12 +72,11 @@ app.use('/api', function(req, res, next) {
   throw new responseError('Not found', httpStatus.NOT_FOUND);
 });
 
-app.use(function(req, res, next) {
-  req.url = '/index.html';
-  next();
-});
-
 app.use(express.static('public'));
+
+app.use(function(req, res, next) {
+  res.sendFile('public/index.html', { root: __dirname });
+});
 
 app.use(function(err, req, res, next) {
   logger.error(`Failed '${req.url}'. ${err.stack}`);

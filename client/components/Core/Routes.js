@@ -8,16 +8,18 @@ const Routes = () => {
   const routeComponents = [];
   ['common', 'loggedIn', 'loggedOut'].forEach((type) => {
     const auth = type === 'loggedIn';
-    routes[type].forEach((key) => {
-      const route = routes[type][key];
+    const routesForType = routes[type];
+    Object.keys(routesForType).forEach((key) => {
+      const route = routesForType[key];
       const wrapped = getAtPath(route, 'wrapped', true);
       const routeComponent = (
         <WrappedRoute
+          key={`route_${type}_${key}`}
           exact
           path={route.path}
           wrapped={wrapped}
           auth={auth}
-          component={route.component}
+          component={React.createElement(route.component)}
         />
       );
       routeComponents.push(routeComponent);

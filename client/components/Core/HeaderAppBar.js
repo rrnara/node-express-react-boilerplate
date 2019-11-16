@@ -82,8 +82,10 @@ class HeaderAppBar extends Component {
     this.switchTheme = this.switchTheme.bind(this);
   }
 
+  logout() {}
+
   handleDrawerOpen() {
-    this.props.handleDrawerOpen();
+    this.props.updateDrawerOpen(true);
   }
 
   switchTheme(event) {
@@ -145,7 +147,7 @@ class HeaderAppBar extends Component {
 
 HeaderAppBar.propTypes = {
   drawerOpen: PropTypes.bool.isRequired,
-  handleDrawerOpen: PropTypes.func.isRequired,
+  updateDrawerOpen: PropTypes.func.isRequired,
   user: PropTypes.instanceOf(Object),
   darkTheme: PropTypes.bool,
   theme: PropTypes.instanceOf(Object),

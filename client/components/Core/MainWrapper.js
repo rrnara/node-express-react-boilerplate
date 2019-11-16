@@ -42,6 +42,7 @@ const useStyles = theme => ({
 
 const mapStateToProps = state => {
   return {
+    bearerToken: state.auth.bearerToken,
     requestState: getRequestState(state, HTTP_GET, userEntity)
   };
 };
@@ -62,7 +63,21 @@ class MainWrapper extends Component {
   }
 
   componentDidMount() {
-    this.props.doGetUser();
+    this.fetchUser();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { bearerToken } = this.props;
+    if (bearerToken !== prevProps.bearerToken) {
+      this.fetchUser();
+    }
+  }
+
+  fetchUser() {
+    // If we have a bearer token, fetch the user
+    if (this.props.bearerToken) {
+      this.props.doGetUser();
+    }
   }
 
   updateDrawerOpen(open) {
@@ -77,24 +92,30 @@ class MainWrapper extends Component {
     } = this.props;
 
     let childComponent = this.props.children;
-    if (!requestState.done) {
-      childComponent = <CircularProgress />;
-    } else if (requestState.error) {
-      childComponent = (
-        <FormHelperText error>
-          Error occured: {requestState.error.error}
-        </FormHelperText>
-      );
+    if (this.props.auth) {
+      if (!requestState.done) {
+        childComponent = <CircularProgress />;
+      } else if (requestState.error) {
+        childComponent = (
+          <FormHelperText error>
+            Error occured: {requestState.error.error}
+          </FormHelperText>
+        );
+      }
     }
 
     return (
       <div className={classes.root}>
         <CssBaseline />
         <HeaderAppBar
-          handleDrawerOpen={this.handleDrawerOpen}
+          updateDrawerOpen={this.updateDrawerOpen}
           drawerOpen={open}
         />
-        <SideDrawer open={open} updateDrawerOpen={this.updateDrawerOpen} />
+        <SideDrawer
+          open={open}
+          updateDrawerOpen={this.updateDrawerOpen}
+          toolbarClass={classes.toolbar}
+        />
         <main className={classes.parentContainer}>
           <div className={classes.toolbar} />
           <div className={classes.content}>
