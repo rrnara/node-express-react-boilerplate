@@ -1,0 +1,22 @@
+{
+  "app": {
+      "port": 4321
+  },
+  "logLevel": "debug",
+  "cors": {
+    "allow": true,
+    "whitelist": [ "http://localhost:4321" ]
+  },
+  "mailgun": {
+    "key": "abcd",
+    "public_key": "efgh"
+  },
+  "db": {
+    "host": "localhost",
+    "database": "testService",
+    "username": "postgres",
+    "password": "",
+    "dialect": "postgres",
+    "logging": true
+  }
+}
