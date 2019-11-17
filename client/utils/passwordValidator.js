@@ -1,6 +1,6 @@
-import passwordValidator from 'password-validator';
+const passwordValidator = require('password-validator');
 
-export const validator = new passwordValidator()
+const validator = new passwordValidator()
   .is().min(8)                                    // Minimum length 8
   .is().max(32)                                   // Maximum length 32
   .has().uppercase()                              // Must have uppercase letters
@@ -10,7 +10,7 @@ export const validator = new passwordValidator()
   .has().not().spaces()                           // Should not have spaces
 ;
 
-export const errors = {
+const errors = {
   min: "Password needs to be atleast 8 characters",
   max: "Password can atmost 32 characters",
   uppercase: "Password needs atleast 1 uppercase character",
@@ -19,3 +19,5 @@ export const errors = {
   symbols: "Password needs atleast 1 special character",
   spaces: "Password cannot have spaces"
 };
+
+module.exports = { validator, errors };

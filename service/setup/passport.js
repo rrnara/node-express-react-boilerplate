@@ -1,8 +1,10 @@
+const httpStatus = require('http-status');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
 const InstagramStrategy = require('passport-instagram').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const { ExtractJwt } = require('passport-jwt');
+const ResponseError = require('../common/ResponseError');
 
 module.exports = function(passport, config, db) {
   // http://www.passportjs.org/packages/passport-google-oauth20/
@@ -38,18 +40,17 @@ module.exports = function(passport, config, db) {
 
   // http://www.passportjs.org/packages/passport-jwt/
   const jwtConfig = config.get('passport.jwt');
-  passport.use(new JwtStrategy(Object.assign(jwtConfig, { jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken() }),
-    function(jwt_payload, done) {
-      User.findOne({id: jwt_payload.sub}, function(err, user) {
-          if (err) {
-              return done(err, false);
-          }
-          if (user) {
-              return done(null, user);
-          } else {
-              return done(null, false);
-              // or you could create a new account
-          }
+  passport.use(new JwtStrategy({ jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), secretOrKey: jwtConfig.secret },
+    function(jwtPayload, done) {
+      User.findOne({ where: { id: jwtPayload.id } }, function(err, user) {
+        if (err) {
+          return done(err, false);
+        } else if (user) {
+          return done(null, user);
+        } else {
+          return done(new responseError('User not found', httpStatus.UNAUTHORIZED), null);
+        }
       });
-  }));
+    }
+  ));
 };

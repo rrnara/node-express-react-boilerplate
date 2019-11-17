@@ -22,6 +22,9 @@ module.exports = function(config) {
     if (db[modelName].associate) {
       db[modelName].associate(db);
     }
+    if (db[modelName].setConfig) {
+      db[modelName].setConfig(config);
+    }
   });
 
   db.sequelize = sequelize;

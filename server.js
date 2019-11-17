@@ -11,6 +11,8 @@ const responseError = require('./service/common/ResponseError');
 const loggerSetup = require('./service/setup/logger');
 const passportSetup = require('./service/setup/passport');
 const dbSetup = require('./service/setup/sequelize');
+const routingSetup = require('./service/setup/routing');
+const authController = require('./service/controllers/auth');
 
 const environment = config.util.getEnv() || 'development';
 const isDev = environment === 'development';
@@ -60,13 +62,7 @@ const db = dbSetup(config);
 app.use(passport.initialize());
 // passportSetup(passport, config, db);
 
-app.get('/api/success', function(req, res) {
-  res.json(lodash.pick(req, ['method', 'originalUrl', 'baseUrl', 'path']));
-});
-
-app.get('/api/error', function(req, res) {
-  throw new Error('Problem Here!');
-});
+routingSetup(app, db, config);
 
 app.use('/api', function(req, res, next) {
   throw new responseError('Not found', httpStatus.NOT_FOUND);
