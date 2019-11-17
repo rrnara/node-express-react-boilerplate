@@ -1,13 +1,12 @@
 import React from 'react';
 import { get as getAtPath } from 'lodash';
 import { Switch } from 'react-router-dom';
-import { routes } from './constants';
+import { routes, routeTypes } from './constants';
 import WrappedRoute from './WrappedRoute';
 
 const Routes = () => {
   const routeComponents = [];
-  ['common', 'loggedIn', 'loggedOut'].forEach((type) => {
-    const auth = type === 'loggedIn';
+  Object.values(routeTypes).forEach((type) => {
     const routesForType = routes[type];
     Object.keys(routesForType).forEach((key) => {
       const route = routesForType[key];
@@ -18,7 +17,7 @@ const Routes = () => {
           exact
           path={route.path}
           wrapped={wrapped}
-          auth={auth}
+          type={type}
           component={React.createElement(route.component)}
         />
       );

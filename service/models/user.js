@@ -1,6 +1,7 @@
 const hashing = require('../common/hashing');
 const jwt = require('jsonwebtoken');
 const pick = require('lodash/pick');
+const globalCache = require('global-cache');
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -26,9 +27,6 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = function(models) {
     // associations can be defined here
   };
-  User.setConfig = function(config) {
-    User.jwtSettings = config.get('passport.jwt');
-  };
   User.addHook('beforeCreate', (user) => {
     if (user.password) {
       user.password = hashing.hashSync(user.password);
@@ -43,7 +41,9 @@ module.exports = (sequelize, DataTypes) => {
     return hashing.compareSync(plainText, this.password);
   };
   User.prototype.generateJWTToken = function() {
-    return jwt.sign({ id: this.id }, User.jwtSettings.secret, { expiresIn: User.jwtSettings.expiresIn });
+    const config = globalCache.get('config');
+    const jwtSettings = config.get('passport.jwt');
+    return jwt.sign({ id: this.id }, jwtSettings.secret, { expiresIn: jwtSettings.expiresIn });
   };
   User.prototype.response = function() {
     return pick(this, ['id', 'email', 'emailVerified']);

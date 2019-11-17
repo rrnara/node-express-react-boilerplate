@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import { routes, routeTypes } from './constants';
 import HeaderAppBar from './HeaderAppBar';
 import SideDrawer from './SideDrawer';
 import { getUser, userEntity } from '../Actions/User';
@@ -42,6 +44,7 @@ const useStyles = theme => ({
 
 const mapStateToProps = state => {
   return {
+    user: state.entities.user,
     bearerToken: state.auth.bearerToken,
     requestState: getRequestState(state, HTTP_GET, userEntity)
   };
@@ -89,10 +92,20 @@ class MainWrapper extends Component {
     const {
       classes,
       requestState,
+      bearerToken,
+      type
     } = this.props;
 
     let childComponent = this.props.children;
-    if (this.props.auth) {
+    if (type === routeTypes.loggedIn) {
+      if (!bearerToken) {
+        return (
+          <Redirect
+            to={routes.loggedOut.root.path}
+          />
+        );
+      }
+
       if (!requestState.done) {
         childComponent = <CircularProgress />;
       } else if (requestState.error) {
@@ -100,6 +113,14 @@ class MainWrapper extends Component {
           <FormHelperText error>
             Error occured: {requestState.error.error}
           </FormHelperText>
+        );
+      }
+    } else if (type === routeTypes.loggedOut) {
+      if (bearerToken) {
+        return (
+          <Redirect
+            to={routes.loggedIn.root.path}
+          />
         );
       }
     }

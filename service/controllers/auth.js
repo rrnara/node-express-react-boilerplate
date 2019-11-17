@@ -2,6 +2,7 @@ const lodash = require('lodash');
 const { Router } = require('express');
 const Joi = require('@hapi/joi');
 const joiValidator = require('express-joi-validation').createValidator({});
+const globalCache = require('global-cache');
 const asyncMiddleware = require('../common/asyncMiddleware');
 const pv = require('../../client/utils/passwordValidator');
 
@@ -20,7 +21,8 @@ const passwordJoi = Joi.extend(joi => ({
   }
 }));
 
-module.exports = function (db, config) {
+module.exports = function() {
+  const database = globalCache.get('database');
   const router = Router();
 
   const loginBody = passwordJoi.object({
@@ -28,7 +30,7 @@ module.exports = function (db, config) {
     password: passwordJoi.string().required()
   });
   router.post('/login', joiValidator.body(loginBody), asyncMiddleware(async (req, res, next) => {
-    const user = await db.User.findOne({ where: { email: req.body.email } });
+    const user = await database.User.findOne({ where: { email: req.body.email } });
     res.send({ user: user.response(), token: user.generateJWTToken() });
   }));
 

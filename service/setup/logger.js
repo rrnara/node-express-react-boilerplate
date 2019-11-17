@@ -1,4 +1,5 @@
 const { createLogger, format, transports } = require('winston');
+const globalCache = require('global-cache');
 
 function formatParams(info) {
   const { timestamp, level, message, ...args } = info;
@@ -23,9 +24,10 @@ const productionFormat = format.combine(
   format.printf(formatParams)
 );
 
-module.exports = function(config) {
+module.exports = function() {
   // Update config as necessary, refer to https://github.com/winstonjs/winston#logging
   // { error: 0, warn: 1, info: 2, verbose: 3, debug: 4, silly: 5 }
+  const config = globalCache.get('config');
   const level = config.get('logLevel');
   if (config.util.getEnv() !== 'production'){
     return createLogger({

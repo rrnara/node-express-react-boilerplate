@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { withStyles } from '@material-ui/core/styles';
@@ -9,13 +10,14 @@ import Typography from '@material-ui/core/Typography';
 import Switch from '@material-ui/core/Switch';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import IconButton from '@material-ui/core/IconButton';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import LogoutIcon from '@material-ui/icons/ExitToApp';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import { getUser, userEntity } from '../Actions/User';
+import { routes } from './constants';
 import { updateDarkTheme } from '../Actions/UiState';
+import { logout } from '../Actions/Auth';
 import { drawerWidth } from './constants';
 
 const useStyles = theme => ({
@@ -62,12 +64,15 @@ const useStyles = theme => ({
 const mapStateToProps = state => {
   return {
     user: state.entities.user,
-    darkTheme: state.uiState.darkTheme,
+    darkTheme: state.uiState.darkTheme
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
+    doLogout: () => {
+      dispatch(logout());
+    },
     doUpdateDarkTheme: darkTheme => {
       dispatch(updateDarkTheme(darkTheme));
     },
@@ -77,15 +82,35 @@ const mapDispatchToProps = dispatch => {
 class HeaderAppBar extends Component {
   constructor(props) {
     super(props);
-    this.logout = this.logout.bind(this);
     this.handleDrawerOpen = this.handleDrawerOpen.bind(this);
+    this.handleMenuOpen = this.handleMenuOpen.bind(this);
+    this.handleMenuClose = this.handleMenuClose.bind(this);
+    this.openProfile = this.openProfile.bind(this);
+    this.logout = this.logout.bind(this);
     this.switchTheme = this.switchTheme.bind(this);
+    this.state = { menuAnchor: null };
   }
-
-  logout() {}
 
   handleDrawerOpen() {
     this.props.updateDrawerOpen(true);
+  }
+
+  handleMenuOpen(event) {
+    this.setState({ menuAnchor: event.currentTarget });
+  }
+
+  handleMenuClose() {
+    this.setState({ menuAnchor: null });
+  }
+
+  openProfile() {
+    this.handleMenuClose();
+    this.props.history.push(routes.loggedIn.profile.path);
+  }
+
+  logout() {
+    this.handleMenuClose();
+    this.props.doLogout();
   }
 
   switchTheme(event) {
@@ -93,6 +118,7 @@ class HeaderAppBar extends Component {
   }
 
   render() {
+    const { menuAnchor } = this.state;
     const {
       drawerOpen,
       classes,
@@ -110,8 +136,21 @@ class HeaderAppBar extends Component {
             label={themeLabel}
             labelPlacement="top"
           />
-          <AccountCircle className={classes.accountCircle} />
-          <Typography variant="h6">{user.email}</Typography>
+          <MenuItem onClick={this.handleMenuOpen}>
+            <AccountCircle className={classes.accountCircle} />
+            <Typography variant="h6">{user.email}</Typography>
+          </MenuItem>
+          <Menu
+            anchorEl={menuAnchor}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            keepMounted
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            open={!!menuAnchor}
+            onClose={this.handleMenuClose}
+          >
+            <MenuItem onClick={this.openProfile}>Profile</MenuItem>
+            <MenuItem onClick={this.logout}>Logout</MenuItem>
+          </Menu>
         </div>
       );
     }
@@ -158,6 +197,6 @@ HeaderAppBar.propTypes = {
 const HeaderAppBarContainer = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(withStyles(useStyles, { withTheme: true })(HeaderAppBar));
+)(withRouter(withStyles(useStyles, { withTheme: true })(HeaderAppBar)));
 
 export default HeaderAppBarContainer;

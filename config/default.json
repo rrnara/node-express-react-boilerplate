@@ -8,8 +8,8 @@
     "whitelist": [ "http://localhost:4321" ]
   },
   "mailgun": {
-    "key": "abcd",
-    "public_key": "efgh"
+    "apiKey": "abcd",
+    "domain": "efgh"
   },
   "passport": {
     "jwt": {

@@ -9,7 +9,7 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import { routes } from './constants';
+import { routes, routeTypes } from './constants';
 import ListItemLink from './ListItemLink';
 import { drawerWidth } from './constants';
 
@@ -117,9 +117,9 @@ class SideDrawer extends Component {
           </IconButton>
         </div>
         <Divider />
-        {generateList(user ? 'loggedIn' : 'loggedOut')}
+        {generateList(user ? routeTypes.loggedIn : routeTypes.loggedOut)}
         <Divider />
-        {generateList('common')}
+        {generateList(routeTypes.common)}
       </Drawer>
     );
   }

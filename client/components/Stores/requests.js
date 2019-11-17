@@ -1,3 +1,4 @@
+import { LOGOUT_EVENT } from '../Actions/Auth';
 import { parseRequest, requestStateName } from '../../utils/api';
 
 const initialState = {};
@@ -10,6 +11,10 @@ const safeSubstr = (str, start, length = undefined) => {
 }
 
 export default function entities(state = initialState, action) {
+  if (action.type === LOGOUT_EVENT) {
+    const newState = Object.assign({}, initialState);
+    return newState;
+  }
   const requestInfo = parseRequest(action);
   if (requestInfo) {
     const stateName = requestStateName(requestInfo[1], requestInfo[2], safeSubstr(requestInfo[3], 1));

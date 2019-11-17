@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
 import { formToObject } from './utils';
 import { routes } from '../../Core/constants';
 import { authEntity, login } from '../../Actions/Auth';
@@ -9,7 +8,6 @@ import { HTTP_POST, getRequestState } from '../../../utils/api';
 
 const mapStateToProps = state => {
   return {
-    user: state.entities.user,
     requestState: getRequestState(state, HTTP_POST, authEntity)
   };
 };
@@ -18,13 +16,12 @@ const mapDispatchToProps = dispatch => {
   return {
     doLogin: data => {
       dispatch(login(data));
-    },
+    }
   };
 };
 
 const LoginForm = ({
   requestState,
-  user,
   doLogin,
   location: { state: { from: { pathname: returnTo } = {} } = {} } = {},
 } = {}) => {
@@ -32,14 +29,6 @@ const LoginForm = ({
     event.preventDefault();
     return doLogin(formToObject(event, ['email', 'password']));
   };
-
-  if (user) {
-    return (
-      <Redirect
-        to={returnTo || routes.loggedIn.root}
-      />
-    );
-  }
 
   return (
     <AuthPage
@@ -55,9 +44,9 @@ const LoginForm = ({
   );
 };
 
-const LoginContainer = connect(
+const LoginFormContainer = connect(
   mapStateToProps,
   mapDispatchToProps,
 )(LoginForm);
 
-export { LoginContainer as default };
+export { LoginFormContainer as default };

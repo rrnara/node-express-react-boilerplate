@@ -1,4 +1,4 @@
-const lodash = require('lodash');
+const fs = require('fs');
 const express = require('express');
 const config = require('config');
 const cors = require('cors');
@@ -6,18 +6,20 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const passport = require('passport');
 const httpStatus = require('http-status');
-const mailgun = require('mailgun.js');
+const mailgun = require('mailgun-js');
+const globalCache = require('global-cache');
 const responseError = require('./service/common/ResponseError');
 const loggerSetup = require('./service/setup/logger');
 const passportSetup = require('./service/setup/passport');
 const dbSetup = require('./service/setup/sequelize');
 const routingSetup = require('./service/setup/routing');
-const authController = require('./service/controllers/auth');
 
 const environment = config.util.getEnv() || 'development';
 const isDev = environment === 'development';
 
 const app = express();
+
+globalCache.set('config', config);
 
 const corsConfig = config.get('cors');
 if (corsConfig.allow) {
@@ -38,7 +40,9 @@ if (corsConfig.allow) {
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-const logger = loggerSetup(config);
+const logger = loggerSetup();
+globalCache.set('logger', logger);
+
 const morganFormat = environment !== 'production' ? 'dev' : 'combined';
 app.use(
   morgan(morganFormat, {
@@ -54,15 +58,16 @@ app.use(
   })
 );
 
-// https://github.com/mailgun/mailgun-js#create
-const mg = mailgun.client(Object.assign({ username: 'api' }, config.get('mailgun')));
+const mg = mailgun(config.get('mailgun'));
+globalCache.set('mailgun', mg);
 
-const db = dbSetup(config);
+const db = dbSetup();
+globalCache.set('database', db);
+
+routingSetup(app);
 
 app.use(passport.initialize());
-// passportSetup(passport, config, db);
-
-routingSetup(app, db, config);
+passportSetup(passport);
 
 app.use('/api', function(req, res, next) {
   throw new responseError('Not found', httpStatus.NOT_FOUND);

@@ -1,10 +1,12 @@
 const lodash = require('lodash');
 const fs = require('fs');
 const path = require('path');
+const globalCache = require('global-cache');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 
-module.exports = function(config) {
+module.exports = function() {
+  const config = globalCache.get('config');
   const dbConfig = config.get('db');
   const sequelize = dbConfig.url ? new Sequelize(dbConfig.url, lodash.pick(dbConfig, ['dialect', 'logging']))
                                  : new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, lodash.pick(dbConfig, ['host', 'dialect', 'logging']));
@@ -21,9 +23,6 @@ module.exports = function(config) {
   Object.keys(db).forEach(modelName => {
     if (db[modelName].associate) {
       db[modelName].associate(db);
-    }
-    if (db[modelName].setConfig) {
-      db[modelName].setConfig(config);
     }
   });
 

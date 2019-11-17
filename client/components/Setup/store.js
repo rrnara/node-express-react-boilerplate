@@ -13,7 +13,7 @@ import uiState from '../Stores/uiState';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth.bearerToken', 'uiState'],
+  whitelist: ['auth', 'uiState'],
 };
 
 let store;
