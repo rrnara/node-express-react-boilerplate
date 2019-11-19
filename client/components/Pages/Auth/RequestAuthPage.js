@@ -29,7 +29,7 @@ const RequestAuthPage = ({ requestState, doRequest, type, ...props }) => {
     <AuthPage
       {...props}
       onSubmit={submit}
-      submitting={requestState.done}
+      submitting={requestState.done === false}
       error={requestState.error}
     />
   );

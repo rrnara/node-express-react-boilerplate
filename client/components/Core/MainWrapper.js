@@ -5,7 +5,7 @@ import { Redirect } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import FormHelperText from '@material-ui/core/FormHelperText';
+import FormLabel from '@material-ui/core/FormLabel';
 import { routes, routeTypes } from './constants';
 import HeaderAppBar from './HeaderAppBar';
 import SideDrawer from './SideDrawer';
@@ -110,9 +110,9 @@ class MainWrapper extends Component {
         childComponent = <CircularProgress />;
       } else if (requestState.error) {
         childComponent = (
-          <FormHelperText error>
+          <FormLabel error>
             Error occured: {requestState.error.error}
-          </FormHelperText>
+          </FormLabel>
         );
       }
     } else if (type === routeTypes.loggedOut) {

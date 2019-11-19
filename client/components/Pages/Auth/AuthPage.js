@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { get as getAtPath, isEmpty } from 'lodash';
+import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormHelperText from '@material-ui/core/FormHelperText';
+import FormLabel from '@material-ui/core/FormLabel';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { Link as RouterLink } from 'react-router-dom';
-import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import FacebookIcon from '@material-ui/icons/Facebook';
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import { validator, errors as passwordErrors } from '../../../utils/passwordValidator';
 import MultilineString from '../../Core/MultilineString';
 
@@ -41,6 +43,10 @@ const useStyles = makeStyles(theme => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  submitFacebook: {
+    margin: theme.spacing(0, 0, 2),
+    backgroundColor: '#3578E5'
+  },
   submitProgress: {
     position: 'absolute',
     top: '50%',
@@ -64,6 +70,7 @@ function validatePasswords(password, confirmPassword) {
 export default function AuthPage(formElements) {
   const classes = useStyles();
 
+  const facebookAppId = process.env.FACEBOOK_CLIENT_ID;
   const emailProps = { autoFocus: true };
   const updatingPassword = !!formElements.updatePasswordFor;
   const showPassword = updatingPassword || formElements.password;
@@ -92,6 +99,10 @@ export default function AuthPage(formElements) {
       setConfirmPasswordString(event.target.value);
       setUpdatePasswordError(validatePasswords(passwordString, event.target.value));
     }
+  };
+
+  const facebookCallback = profile => {
+    formElements.facebookCallback(profile);
   };
 
   return (
@@ -151,7 +162,7 @@ export default function AuthPage(formElements) {
               />
             )}
             {(updatePasswordError || requestError) && (
-              <FormHelperText error>Error occured: {MultilineString(updatePasswordError || requestError)}</FormHelperText>
+              <FormLabel error>Error occured: {MultilineString(updatePasswordError || requestError, 'err')}</FormLabel>
             )}
             <Button
               type="submit"
@@ -164,6 +175,24 @@ export default function AuthPage(formElements) {
               {formElements.submit}
               {formElements.submitting && <CircularProgress size={24} className={classes.submitProgress} />}
             </Button>
+            {!!formElements.facebookCallback && <FacebookLogin
+              appId={facebookAppId}
+              autoLoad={false}
+              fields="name,email"
+              callback={facebookCallback}
+              render={renderProps => (
+                <Button
+                  onClick={renderProps.onClick}
+                  startIcon={<FacebookIcon />}
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submitFacebook}
+                >
+                  Login With Facebook
+                </Button>
+              )}
+            />}
             <Grid container>
               <Grid item xs>
                 <RouterLink to={formElements.link1.path} variant="body2">

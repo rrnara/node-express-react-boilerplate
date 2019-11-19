@@ -1,4 +1,5 @@
 import { LOGOUT_EVENT } from '../Actions/Auth';
+import { CLEAR_REQUEST_STATE } from '../Actions/Requests';
 import { parseRequest, requestStateName } from '../../utils/api';
 
 const initialState = {};
@@ -15,6 +16,13 @@ export default function entities(state = initialState, action) {
     const newState = Object.assign({}, initialState);
     return newState;
   }
+  if (action.type === CLEAR_REQUEST_STATE) {
+    const stateName = requestStateName(...action.payload);
+    const newState = Object.assign({}, state);
+    delete newState[stateName];
+    return newState;
+  }
+
   const requestInfo = parseRequest(action);
   if (requestInfo) {
     const stateName = requestStateName(requestInfo[1], requestInfo[2], safeSubstr(requestInfo[3], 1));

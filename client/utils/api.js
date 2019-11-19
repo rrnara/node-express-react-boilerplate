@@ -24,7 +24,7 @@ export function requestStateName(httpMethod, entityName, suffixName = undefined)
 
 export function getRequestState(state, httpMethod, entityName, suffxName = undefined) {
   const stateName = requestStateName(httpMethod, entityName, suffxName);
-  let result = { done: false };
+  let result = { done: null };
   if (state.requests[stateName]) {
     result.done = state.requests[stateName].stage === 'SUCCESS';
     if (state.requests[stateName].stage === 'FAILURE') {

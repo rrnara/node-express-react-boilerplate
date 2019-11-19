@@ -2,24 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { parse } from 'query-string';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import FormHelperText from '@material-ui/core/FormHelperText';
+import FormLabel from '@material-ui/core/FormLabel';
 import { tokenEntity, validateToken, authEntity, setPassword } from '../../Actions/Auth';
 import { pick, isEmpty } from 'lodash';
 import { formToObject } from './utils';
 import AuthPage from './AuthPage';
-import { HTTP_POST, HTTP_PUT, getRequestState } from '../../utils/api';
+import { HTTP_POST, HTTP_PUT, getRequestState } from '../../../utils/api';
 
 const mapStateToProps = (state, ownProps) => {
   return {
     validateRequestState: getRequestState(state, HTTP_POST, tokenEntity, ownProps.type),
-    passwordRequestState: getRequestState(state, HTTP_PUT, tokenauthEntityEntity, ownProps.type)
+    passwordRequestState: getRequestState(state, HTTP_PUT, authEntity, ownProps.type)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     doValidateRequest: data => dispatch(validateToken(data)),
-    doSetPasswordRequest: data => dispatch(validateToken(data))
+    doSetPasswordRequest: data => dispatch(setPassword(data))
   };
 };
 
@@ -34,9 +34,9 @@ const ValidateTokenPage = ({ validateRequestState, passwordRequestState, doValid
 
   if (isEmpty(params.email) || isEmpty(params.token)) {
     return (
-      <FormHelperText error>
+      <FormLabel error>
         Bad Link: Need email and token provided
-      </FormHelperText>
+      </FormLabel>
     );
   }
 
@@ -53,7 +53,7 @@ const ValidateTokenPage = ({ validateRequestState, passwordRequestState, doValid
   if (!validateRequestState.done) {
     return <CircularProgress />;
   } else if (validateRequestState.error) {
-    return <FormHelperText error>Error occured: {validateRequestState.error.error}</FormHelperText>;
+    return <FormLabel error>Error occured: {validateRequestState.error.error}</FormLabel>;
   }
 
   return (
@@ -61,7 +61,7 @@ const ValidateTokenPage = ({ validateRequestState, passwordRequestState, doValid
       {...props}
       onSubmit={submit}
       updatePasswordFor={params.email}
-      submitting={passwordRequestState.done}
+      submitting={passwordRequestState.done === false}
       error={passwordRequestState.error}
     />
   );

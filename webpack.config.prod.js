@@ -1,6 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const StyleLintPlugin = require('stylelint-bare-webpack-plugin');
@@ -12,15 +10,7 @@ config.mode = 'production';
 
 config.output.filename = 'app.[chunkhash:8].js';
 
-config.plugins = [
-  new webpack.DefinePlugin({
-    'process.env': {
-      NODE_ENV: JSON.stringify('production')
-    }
-  }),
-  new HtmlWebpackPlugin({
-    template: path.join(__dirname, 'index.html')
-  }),
+const appendPlugins = [
   new MiniCssExtractPlugin({
     filename: 'app.[chunkhash:8].css'
   }),
@@ -32,6 +22,7 @@ config.plugins = [
     fileName: 'manifest.json'
   })
 ];
+config.plugins.push(...appendPlugins);
 
 config.optimization = {
   minimize: true,

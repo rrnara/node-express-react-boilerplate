@@ -1,4 +1,4 @@
-import { authEntity, LOGOUT_EVENT } from '../Actions/Auth';
+import { authEntity, facebookEntity, LOGOUT_EVENT } from '../Actions/Auth';
 import { userEntity } from '../Actions/User';
 import { HTTP_GET, HTTP_POST, HTTP_PUT, isRequestSuccess } from '../../utils/api';
 
@@ -14,7 +14,9 @@ export default function entities(state = initialState, action) {
     newState.user = action.payload.user;
     return newState;
   }
-  if (isRequestSuccess(action, HTTP_POST, authEntity) || isRequestSuccess(action, HTTP_PUT, authEntity)) {
+  if (isRequestSuccess(action, HTTP_POST, authEntity) ||
+      isRequestSuccess(action, HTTP_PUT, authEntity) ||
+      isRequestSuccess(action, HTTP_POST, facebookEntity)) {
     const newState = Object.assign({}, state);
     newState.user = action.payload.user;
     return newState;

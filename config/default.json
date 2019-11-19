@@ -15,6 +15,10 @@
     "jwt": {
       "expiresIn": "7d",
       "secret": "5c4bab72da0a4d15eb2b89d1c3c236c1f2ec97d398b46b66bb1e9e85494884f90b6b0509c8fcd200d37499c16e6610da"
+    },
+    "facebook": {
+      "clientID": 1234,
+      "clientSecret": 5678
     }
   },
   "db": {

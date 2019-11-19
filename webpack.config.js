@@ -1,6 +1,4 @@
-const path = require('path');
 const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const StyleLintPlugin = require('stylelint-bare-webpack-plugin');
 
@@ -8,10 +6,7 @@ const config = require('./webpack.config.base');
 
 config.mode = 'development';
 
-config.plugins = [
-  new HtmlWebpackPlugin({
-    template: path.join(__dirname, 'index.html')
-  }),
+const appendPlugins = [
   new MiniCssExtractPlugin({
     filename: 'app.css'
   }),
@@ -21,6 +16,7 @@ config.plugins = [
   }),
   new webpack.HotModuleReplacementPlugin()
 ];
+config.plugins.push(...appendPlugins);
 
 config.devServer = {
   hot: true,

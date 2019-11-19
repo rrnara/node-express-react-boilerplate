@@ -1,15 +1,14 @@
 import { HTTP_GET, HTTP_POST, HTTP_PUT, makeRequest } from '../../utils/api';
 
+export const facebookEntity = 'FACEBOOK';
+
+export const facebookAuth = ({ accessToken }) =>
+  makeRequest('auth/facebook', HTTP_POST, facebookEntity, { access_token: accessToken });
+
 export const authEntity = 'AUTH';
 
 export const login = ({ email, password }) =>
   makeRequest('auth/login', HTTP_POST, authEntity, { email, password });
-
-export const LOGOUT_EVENT = `${authEntity}_DELETE`;
-
-export const logout = () => {
-  return { type: LOGOUT_EVENT };
-};
 
 // Using verification or reset password token to set the user password
 export const setPassword = ({ type, token, email, password }) =>
@@ -22,3 +21,9 @@ export const validateToken = ({ type, token, email }) =>
 
 export const generateToken = ({ type, email }) =>
   makeRequest('auth/generateToken', HTTP_PUT, tokenEntity, { type, email }, type);
+
+export const LOGOUT_EVENT = `${authEntity}_DELETE`;
+
+export const logout = () => {
+  return { type: LOGOUT_EVENT };
+};

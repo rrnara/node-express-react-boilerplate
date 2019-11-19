@@ -6,6 +6,6 @@ module.exports = {
     return bcrypt.hashSync(plainText, saltRounds);
   },
   compareSync: (plainText, hash) => {
-    bcrypt.compareSync(plainText, hash);
+    return bcrypt.compareSync(plainText, hash);
   }
 };

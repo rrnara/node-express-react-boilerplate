@@ -64,10 +64,10 @@ globalCache.set('mailgun', mg);
 const db = dbSetup();
 globalCache.set('database', db);
 
-routingSetup(app);
-
 app.use(passport.initialize());
 passportSetup(passport);
+
+routingSetup(app);
 
 app.use('/api', function(req, res, next) {
   throw new responseError('Not found', httpStatus.NOT_FOUND);
