@@ -1,29 +1,45 @@
-const httpStatus = require('http-status');
+const lodash = require('lodash');
 const FacebookTokenStrategy = require('passport-facebook-token');
 const JwtStrategy = require('passport-jwt').Strategy;
 const { ExtractJwt } = require('passport-jwt');
 const globalCache = require('global-cache');
 const { twoParamAsyncMiddleware, fourParamAsyncMiddleware } = require('../common/asyncMiddleware');
-const ResponseError = require('../common/ResponseError');
+const { BOOLIFY } = require('../common/utils');
 
 module.exports = function(passport) {
   const database = globalCache.get('database');
   const config = globalCache.get('config');
+  const Op = database.Sequelize.Op;
 
   const facebookConfig = Object.assign({}, config.get('passport.facebook'));
   // facebookConfig.profileFields = ['id', 'displayName', 'email'];
   facebookConfig.fbGraphVersion = 'v5.0';
   passport.use(new FacebookTokenStrategy(facebookConfig,
     fourParamAsyncMiddleware(async (accessToken, refreshToken, profile, done) => {
-      let user = await database.User.findOne({ where: { facebookId: profile.id } });
-      if (!user) {
-        user = await database.User.findOne({ where: { email: profile.emails[0].value } });
-        if (!user) {
-          const u = { facebookId: profile.id, email: profile.emails[0].value, name: profile.displayName, emailVerified: true };
-          user = await database.User.create({ facebookId: profile.id, email: profile.emails[0].value, name: profile.displayName, emailVerified: true });
+      let facebookUser;
+      const user = { facebookId: profile.id, email: profile.emails[0].value, name: profile.displayName, emailVerified: true };
+      const users = await database.User.findAll({ where: { [Op.or]: [ { facebookId: user.facebookId }, { email: user.email } ] } });
+      if (users.length > 2) {
+        // Unique index should prevent this state
+        throw new Error('Unexpected DB condition');
+      } else if (users.length == 0) {
+        facebookUser = await database.User.create(user);
+      } else if (users.length == 1) {
+        // We have one and not the other, need to update
+        facebookUser = users[0];
+        if (!lodash.isEqual(user, lodash.pick(facebookUser, Object.keys(user)))) {
+          await facebookUser.update(user);
+        }
+      } else {
+        if (users[0].facebookId === user.facebookId) {
+          facebookUser = users[0];
+          facebookUser.duplicateId = users[1].id;
+        } else {
+          facebookUser = users[1];
+          facebookUser.duplicateId = users[0].id;
         }
       }
-      return done(null, user);
+      return done(null, facebookUser);
     })
   ));
 

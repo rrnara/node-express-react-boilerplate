@@ -7,6 +7,7 @@ const httpStatus = require('http-status');
 const globalCache = require('global-cache');
 const ResponseError = require('../common/ResponseError');
 const { threeParamAsyncMiddleware } = require('../common/asyncMiddleware');
+const { BOOLIFY } = require('../common/utils');
 const pv = require('../../client/utils/passwordValidator');
 
 const passwordJoi = Joi.extend(joi => ({
@@ -51,7 +52,8 @@ module.exports = function() {
     if (!req.user) {
       throw new ResponseError('User not found', httpStatus.NOT_FOUND);
     }
-    res.send({ user: req.user.response(), token: req.user.generateJWTToken() });
+    const user = Object.assign({ hasDuplicates: BOOLIFY(req.user.duplicateId) }, req.user.response());
+    res.send({ user, token: req.user.generateJWTToken() });
   });
 
   return router;

@@ -1,6 +1,7 @@
 const hashing = require('../common/hashing');
 const jwt = require('jsonwebtoken');
 const pick = require('lodash/pick');
+const isEmpty = require('lodash/isEmpty');
 const globalCache = require('global-cache');
 
 module.exports = (sequelize, DataTypes) => {
@@ -46,7 +47,9 @@ module.exports = (sequelize, DataTypes) => {
     return jwt.sign({ id: this.id }, jwtSettings.secret, { expiresIn: jwtSettings.expiresIn });
   };
   User.prototype.response = function() {
-    return pick(this, ['id', 'email', 'emailVerified']);
-  }
+    return Object.assign({
+      passwordSet: !isEmpty(this.password),
+    }, pick(this, ['id', 'email', 'emailVerified']));
+  };
   return User;
 };
