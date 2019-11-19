@@ -1,5 +1,7 @@
+const path = require('path');
 const webpack = require('webpack');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const StyleLintPlugin = require('stylelint-bare-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
@@ -16,10 +18,8 @@ config.plugins = [
       NODE_ENV: JSON.stringify('production')
     }
   }),
-  new UglifyJsPlugin({
-    cache: true,
-    parallel: true,
-    sourceMap: true
+  new HtmlWebpackPlugin({
+    template: path.join(__dirname, 'index.html')
   }),
   new MiniCssExtractPlugin({
     filename: 'app.[chunkhash:8].css'
@@ -34,13 +34,15 @@ config.plugins = [
 ];
 
 config.optimization = {
+  minimize: true,
+  minimizer: [new TerserPlugin()],
   runtimeChunk: false,
   splitChunks: {
     cacheGroups: {
       commons: {
         test: /[\\/]node_modules[\\/]/,
         name: 'app.vendor',
-        filename: 'client/app.vendor.[chunkhash:8].js',
+        filename: 'app.vendor.[chunkhash:8].js',
         chunks: 'all'
       }
     }

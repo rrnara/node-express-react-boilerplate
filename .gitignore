@@ -1,6 +1,5 @@
 node_modules
 .vscode
 config/local.json
-public/*.js*
-public/*.css*
+public
 test.js
