@@ -6,8 +6,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import FormLabel from '@material-ui/core/FormLabel';
 import { tokenEntity, validateToken, authEntity, setPassword } from '../../Actions/Auth';
 import { pick, isEmpty } from 'lodash';
+import { routes } from '../../Core/constants';
 import { formToObject } from './utils';
-import AuthPage from './AuthPage';
+import Template from './Template';
+import AuthForm from './AuthForm';
 import { HTTP_POST, HTTP_PUT, getRequestState } from '../../../utils/api';
 
 const mapStateToProps = (state, ownProps) => {
@@ -24,7 +26,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-const ValidateTokenPage = ({ validateRequestState, passwordRequestState, doValidateRequest, doSetPasswordRequest, type, location, ...props }) => {
+const ValidateTokenPage = ({ validateRequestState, passwordRequestState, doValidateRequest, doSetPasswordRequest, type, title, location, history, ...props }) => {
   const params = pick(parse(location.search, { parseBooleans: true, parseNumbers : true}), ['email', 'token']);
   const submit = event => {
     event.preventDefault();
@@ -35,9 +37,11 @@ const ValidateTokenPage = ({ validateRequestState, passwordRequestState, doValid
 
   if (isEmpty(params.email) || isEmpty(params.token)) {
     return (
-      <FormLabel error>
-        Bad Link: Need email and token provided
-      </FormLabel>
+      <Template title={title}>
+        <FormLabel error>
+          Bad Link: Need email and token provided
+        </FormLabel>
+      </Template>
     );
   }
 
@@ -50,21 +54,32 @@ const ValidateTokenPage = ({ validateRequestState, passwordRequestState, doValid
     }
   });
 
+  if (passwordRequestState.done && !passwordRequestState.error) {
+    history.push(routes.loggedOut.root.path);
+  }
+
+  let childComponent;
   if (!validateRequestState.done) {
-    return <CircularProgress />;
+    childComponent = <CircularProgress />;
   } else if (validateRequestState.error) {
-    return <FormLabel error>Error occured: {validateRequestState.error.error}</FormLabel>;
+    childComponent = <FormLabel error>Error occured: {validateRequestState.error.error}</FormLabel>;
+  } else {
+    childComponent = (
+      <AuthForm
+        {...props}
+        onSubmit={submit}
+        updatePasswordFor={params.email}
+        submitting={passwordRequestState.done === false}
+        error={passwordRequestState.error}
+      />
+    );
   }
 
   return (
-    <AuthPage
-      {...props}
-      onSubmit={submit}
-      updatePasswordFor={params.email}
-      submitting={passwordRequestState.done === false}
-      error={passwordRequestState.error}
-    />
-  );
+    <Template title={title}>
+      {childComponent}
+    </Template>
+  )
 };
 
 const ValidateTokenPageContainer = connect(

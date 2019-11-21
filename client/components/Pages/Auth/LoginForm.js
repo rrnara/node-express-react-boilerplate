@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { formToObject } from './utils';
 import { routes } from '../../Core/constants';
 import { authEntity, facebookEntity, login, facebookAuth } from '../../Actions/Auth';
-import AuthPage from './AuthPage';
+import Template from './Template';
+import AuthForm from './AuthForm';
 import { HTTP_POST, getRequestState } from '../../../utils/api';
 
 const mapStateToProps = state => {
@@ -41,17 +42,19 @@ const LoginForm = ({
   };
 
   return (
-    <AuthPage
-      password
-      submit="Login"
-      title="Login"
-      link1={routes.loggedOut.resetPassword}
-      link2={routes.loggedOut.confirmEmail}
-      onSubmit={submit}
-      facebookCallback={facebookCallback}
-      submitting={requestState.done === false || facebookRequestState.done === false}
-      error={requestState.error || facebookRequestState.error}
-    />
+    <Template title="Login">
+      <AuthForm
+        password
+        submit="Login"
+        title="Login"
+        link1={routes.loggedOut.resetPassword}
+        link2={routes.loggedOut.confirmEmail}
+        onSubmit={submit}
+        facebookCallback={facebookCallback}
+        submitting={requestState.done === false || facebookRequestState.done === false}
+        error={requestState.error || facebookRequestState.error}
+      />
+    </Template>
   );
 };
 

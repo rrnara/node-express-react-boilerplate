@@ -1,8 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { routes } from '../../Core/constants';
 import { tokenEntity, generateToken } from '../../Actions/Auth';
 import { formToObject } from './utils';
-import AuthPage from './AuthPage';
+import Template from './Template';
+import AuthForm from './AuthForm';
 import { HTTP_PUT, getRequestState } from '../../../utils/api';
 
 const mapStateToProps = (state, ownProps) => {
@@ -17,7 +20,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-const RequestAuthPage = ({ requestState, doRequest, type, ...props }) => {
+const RequestAuthPage = ({ requestState, doRequest, type, title, ...props }) => {
   const submit = event => {
     event.preventDefault();
     const data = formToObject(event, ['email']);
@@ -25,13 +28,19 @@ const RequestAuthPage = ({ requestState, doRequest, type, ...props }) => {
     return doRequest(data);
   };
 
+  if (requestState.done && !requestState.error) {
+    history.push(routes.loggedOut.root.path);
+  }
+
   return (
-    <AuthPage
-      {...props}
-      onSubmit={submit}
-      submitting={requestState.done === false}
-      error={requestState.error}
-    />
+    <Template title={title}>
+      <AuthPage
+        {...props}
+        onSubmit={submit}
+        submitting={requestState.done === false}
+        error={requestState.error}
+      />
+    </Template>
   );
 };
 
