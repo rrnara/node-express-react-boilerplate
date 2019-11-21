@@ -1,4 +1,3 @@
-const fs = require('fs');
 const express = require('express');
 const config = require('config');
 const cors = require('cors');
@@ -6,10 +5,10 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const passport = require('passport');
 const httpStatus = require('http-status');
-const mailgun = require('mailgun-js');
 const globalCache = require('global-cache');
 const responseError = require('./service/common/ResponseError');
 const loggerSetup = require('./service/setup/logger');
+const mailerSetup = require('./service/setup/mailer');
 const passportSetup = require('./service/setup/passport');
 const dbSetup = require('./service/setup/sequelize');
 const routingSetup = require('./service/setup/routing');
@@ -58,8 +57,8 @@ app.use(
   })
 );
 
-const mg = mailgun(config.get('mailgun'));
-globalCache.set('mailgun', mg);
+const mailer = mailerSetup();
+globalCache.set('mailer', mailer);
 
 const db = dbSetup();
 globalCache.set('database', db);

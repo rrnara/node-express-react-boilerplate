@@ -5,7 +5,7 @@ A detailed boilerplate which helps kick start your website. The service has an U
 ## Features
 
 * Express <img src="https://camo.githubusercontent.com/fc61dcbdb7a6e49d3adecc12194b24ab20dfa25b/68747470733a2f2f692e636c6f756475702e636f6d2f7a6659366c4c376546612d3330303078333030302e706e67" height="24">
-* Passport (JWT, Facebook, Instagram, Google authentication) <img src="http://cdn.auth0.com/img/passport-banner-github.png" height="24">
+* Passport (JWT and Facebook authentication) <img src="http://cdn.auth0.com/img/passport-banner-github.png" height="24">
 * Sequlize/Postgres DB with basic User model <img src="https://cdn.worldvectorlogo.com/logos/sequelize.svg" height="24">
 * Winston/Morgan for logging
 * Mailgun <img src="https://camo.githubusercontent.com/a7b368cab293892c59fc278fa5cebe4f8ddbe1a8/68747470733a2f2f7261772e6769746875622e636f6d2f6d61696c67756e2f6d656469612f6d61737465722f4d61696c67756e5f5072696d6172792e706e67" height="24">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import { parse } from 'query-string';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -49,7 +50,6 @@ const ValidateTokenPage = ({ validateRequestState, passwordRequestState, doValid
     }
   });
 
-
   if (!validateRequestState.done) {
     return <CircularProgress />;
   } else if (validateRequestState.error) {
@@ -70,6 +70,6 @@ const ValidateTokenPage = ({ validateRequestState, passwordRequestState, doValid
 const ValidateTokenPageContainer = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(ValidateTokenPage);
+)(withRouter(ValidateTokenPage));
 
 export { ValidateTokenPageContainer as default };

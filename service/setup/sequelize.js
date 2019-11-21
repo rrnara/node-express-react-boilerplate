@@ -7,7 +7,11 @@ const basename = path.basename(__filename);
 
 module.exports = function() {
   const config = globalCache.get('config');
-  const dbConfig = config.get('db');
+  const logger = globalCache.get('logger');
+  const dbConfig = Object.assign({}, config.get('db'));
+  if (dbConfig.logging) {
+    dbConfig.logging = (msg) => logger.info(msg);
+  }
   const sequelize = dbConfig.url ? new Sequelize(dbConfig.url, lodash.pick(dbConfig, ['dialect', 'logging']))
                                  : new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, lodash.pick(dbConfig, ['host', 'dialect', 'logging']));
 

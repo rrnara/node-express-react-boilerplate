@@ -154,8 +154,8 @@ export default function AuthPage(formElements) {
                 required
                 fullWidth
                 name="confirmPassword"
-                label="Password"
-                type="confirmPassword"
+                label="Confirm Password"
+                type="password"
                 id="confirmPassword"
                 autoComplete="confirm-password"
                 onChange={handleConfirmPasswordChange}

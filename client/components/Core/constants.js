@@ -9,6 +9,8 @@ import Profile from '../Pages/LoggedIn/Profile';
 import LoginForm from '../Pages/Auth/LoginForm';
 import RequestEmailConfirmation from '../Pages/Auth/RequestEmailConfirmation';
 import RequestResetPassword from '../Pages/Auth/RequestResetPassword';
+import ValidateEmailConfirmation from '../Pages/Auth/ValidateEmailConfirmation';
+import ValidateResetPassword from '../Pages/Auth/ValidateResetPassword';
 
 export const drawerWidth = 280;
 
@@ -32,7 +34,7 @@ export const routes = {
     root:          { path: '/login', label: 'Login', component: LoginForm, drawerMenuIcon: LoginIcon },
     resetPassword: { path: '/resetPassword', label: 'Forgot Password?', component: RequestResetPassword },
     confirmEmail:  { path: '/confirmEmail', label: 'Resend confirmation', component: RequestEmailConfirmation },
-    verifyReset:   { path: '/verifyReset', label: 'Reset Password', component: RequestResetPassword },
-    verifyEmail:   { path: '/verifyEmail', label: 'Complete Registration', component: RequestEmailConfirmation }
+    verifyReset:   { path: '/verifyReset', label: 'Reset Password', component: ValidateResetPassword },
+    verifyEmail:   { path: '/verifyEmail', label: 'Complete Registration', component: ValidateEmailConfirmation }
   }
 };

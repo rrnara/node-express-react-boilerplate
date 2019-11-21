@@ -1,0 +1,12 @@
+{
+  "app": {
+    "port": 80
+  },
+  "logLevel": "info",
+  "passport": {
+    "jwt": {
+      "expiresIn": "3d",
+      "secret": "7f0fbd0b1c41a530569b1453d8e08b3c9e76333fd1e60761c2164b426360749067e90932f74a7f52d716957d9b8d4cac"
+    }
+  }
+}
