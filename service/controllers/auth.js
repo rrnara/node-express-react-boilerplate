@@ -86,8 +86,8 @@ module.exports = function() {
     } else {
       validateTokens(user, req.body);
     }
-    await user.update({ password: req.body.password });
-    res.send({ email: user.email });
+    await user.update({ password: req.body.password, emailVerified: true });
+    res.send({ user: user.response, token: user.generateJWTToken() });
   }));
 
   const validateBody = passwordJoi.object({

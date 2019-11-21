@@ -11,6 +11,7 @@ const validator = new passwordValidator()
 ;
 
 const errors = {
+  match: "Passwords do not match",
   min: "Password needs to be atleast 8 characters",
   max: "Password can atmost 32 characters",
   uppercase: "Password needs atleast 1 uppercase character",

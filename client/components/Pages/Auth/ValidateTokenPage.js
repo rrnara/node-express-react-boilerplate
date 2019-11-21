@@ -55,7 +55,7 @@ const ValidateTokenPage = ({ validateRequestState, passwordRequestState, doValid
   });
 
   if (passwordRequestState.done && !passwordRequestState.error) {
-    history.push(routes.loggedOut.root.path);
+    history.push(routes.loggedIn.root.path);
   }
 
   let childComponent;

@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
 import { get as getAtPath, isEmpty } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormLabel from '@material-ui/core/FormLabel';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Link as RouterLink } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import FacebookIcon from '@material-ui/icons/Facebook';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import { validator, errors as passwordErrors } from '../../../utils/passwordValidator';
@@ -40,30 +36,31 @@ const useStyles = makeStyles(theme => ({
 function validatePasswords(password, confirmPassword) {
   const errors = validator.validate(password, { list: true });
   if (password != confirmPassword) {
-    errors.unshift('Passwords do not match');
+    errors.unshift('match');
   }
   if (isEmpty(errors)) {
     return null;
   }
-  errors.map((err) => passwordErrors[err]).join("\n");
+  return errors.map((err) => passwordErrors[err]).join("\n");
 }
 
-export default function AuthForm(formElements) {
+export default function AuthForm({ link1, link2, password, updatePasswordFor, error, facebookCallback, submit, submitting, onSubmit }) {
   const classes = useStyles();
 
   const facebookAppId = process.env.FACEBOOK_CLIENT_ID;
   const emailProps = { autoFocus: true };
-  const updatingPassword = !!formElements.updatePasswordFor;
-  const showPassword = updatingPassword || formElements.password;
+  const updatingPassword = !!updatePasswordFor;
+  const updateSelfPassword = updatePasswordFor === 'self';
+  const showPassword = updatingPassword || password;
   const passwordProps = {};
   if (updatingPassword) {
-    emailProps.defaultValue = formElements.updatePasswordFor;
+    emailProps.defaultValue = updatePasswordFor;
     emailProps.disabled = true;
     emailProps.autoFocus = false;
     passwordProps.autoFocus = true;
   }
 
-  const requestError = getAtPath(formElements, 'error.error', null);
+  const requestError = getAtPath(error, 'error', null);
   const [updatePasswordError, setUpdatePasswordError] = useState(null);
 
   const [passwordString, setPasswordString] = useState('');
@@ -82,17 +79,13 @@ export default function AuthForm(formElements) {
     }
   };
 
-  const facebookCallback = profile => {
-    formElements.facebookCallback(profile);
-  };
-
   return (
     <form
       className={classes.form}
       noValidate
-      onSubmit={formElements.onSubmit}
+      onSubmit={onSubmit}
     >
-      <TextField
+      {!updateSelfPassword && <TextField
         {...emailProps}
         variant="outlined"
         margin="normal"
@@ -102,7 +95,20 @@ export default function AuthForm(formElements) {
         label="Email Address"
         name="email"
         autoComplete="email"
-      />
+      />}
+      {updateSelfPassword && (
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="oldPassword"
+          label="Old Password"
+          type="password"
+          id="oldPassword"
+          autoComplete="old-password"
+        />
+      )}
       {showPassword && (
         <TextField
           variant="outlined"
@@ -140,12 +146,12 @@ export default function AuthForm(formElements) {
         variant="contained"
         color="primary"
         className={classes.submit}
-        disabled={formElements.submitting || !!updatePasswordError}
+        disabled={submitting || !!updatePasswordError}
       >
-        {formElements.submit}
-        {formElements.submitting && <CircularProgress size={24} className={classes.submitProgress} />}
+        {submit}
+        {submitting && <CircularProgress size={24} className={classes.submitProgress} />}
       </Button>
-      {!!formElements.facebookCallback && <FacebookLogin
+      {!!facebookCallback && <FacebookLogin
         appId={facebookAppId}
         autoLoad={false}
         fields="name,email"
@@ -158,23 +164,24 @@ export default function AuthForm(formElements) {
             variant="contained"
             color="primary"
             className={classes.submitFacebook}
+            disabled={submitting}
           >
             Login With Facebook
           </Button>
         )}
       />}
-      <Grid container>
-        <Grid item xs>
-          <RouterLink to={formElements.link1.path} variant="body2">
-            {formElements.link1.label}
+      {(link1 || link2) && <Grid container>
+        {link1 && <Grid item xs>
+          <RouterLink to={link1.path} variant="body2">
+            {link1.label}
           </RouterLink>
-        </Grid>
-        <Grid item>
-          <RouterLink to={formElements.link2.path} variant="body2">
-            {formElements.link2.label}
+        </Grid>}
+        {link2 && <Grid item>
+          <RouterLink to={link2.path} variant="body2">
+            {link2.label}
           </RouterLink>
-        </Grid>
-      </Grid>
+        </Grid>}
+      </Grid>}
     </form>
   );
 }

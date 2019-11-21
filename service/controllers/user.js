@@ -32,7 +32,7 @@ module.exports = function() {
     const createParams = Object.assign({ email: req.body.email }, database.User.generateToken(true));
     const newUser = await database.User.create(createParams);
 
-    await mailer.sendTokenEmail(req.body.email, 'verifyEmail', emailVerificationToken);
+    await mailer.sendTokenEmail(createParams.email, 'verifyEmail', createParams.emailVerificationToken);
 
     // Send confirmation email
     res.send({ user: newUser.response() });
